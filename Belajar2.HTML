@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Dwiky</title>
+    <title>Toko Online</title>
 
     <style>
         body {
@@ -12,19 +13,31 @@
         }
 
         .navbar {
-            background-color: #f409c5;
-            padding: 15px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            padding: 10px 30px;
         }
 
-        .navbar a {
-            color: rgb(19, 19, 19);
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .menu {
+            margin-left: 30px;
+        }
+
+        .menu a {
+            color: white;
             text-decoration: none;
             margin-right: 25px;
-            font-size:20px;
+            font-size: 18px;
         }
 
-        .navbar a:hover {
-            color: rgba(240, 231, 231, 0.905);
+        .menu a:hover {
+            color: yellow;
         }
     </style>
 </head>
@@ -32,14 +45,24 @@
 <body>
 
     <nav class="navbar">
-        <a href="index.html">Home</a>
-        <a href="produk.html">Produk</a>
-        <a href="tentang.html">Tentang Kami</a>
-        <a href="kontak.html">Kontak</a>
+
+        <!-- LOGO -->
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo Toko">
+        </div>
+
+        <!-- MENU -->
+        <div class="menu">
+            <a href="index.html">Beranda</a>
+            <a href="produk.html">Produk</a>
+            <a href="promo.html">Promo</a>
+            <a href="tentang.html">Tentang Kami</a>
+            <a href="kontak.html">Kontak</a>
+        </div>
+
     </nav>
 
-    <h1>Riska Programing Risti</h1>
-    <p>Ini adalah halaman utama website.</p>
+    <h1>Selamat Datang di Toko Online</h1>
 
 </body>
 </html>
