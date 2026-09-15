@@ -1,4 +1,40 @@
-h1 {color: red;}
+*, html {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box; 
+}
+body {
+    background-color: #ebd6d6;
+}
+nav {
+    background-color: #fcfbff;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+}
 
-nav{background-color:rgb(254, 78, 24)}
+nav ul {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+}
+nav div img{
+    width: 50px;
+}
 
+nav ul li a {
+    text-decoration: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #545252;
+    font-weight: 600;
+    padding: 8px 0;
+    transition-duration: 300ms;
+    border-bottom: 1px solid rgba;
+
+}
+
+nav ul li a:hover {
+    color: orangered
+    border-bottom 1px solid orangered;
+}
