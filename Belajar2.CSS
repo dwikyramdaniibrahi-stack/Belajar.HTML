@@ -18,11 +18,13 @@ body{
     color: #fff;
 } 
 
+
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.4rem 7%;
+    padding: 1.5rem 7%;
     background-color:rgb(1,1,1, 0.8);
     border-bottom: 1px solid #ac8a5a;
     position: fixed;
@@ -37,6 +39,12 @@ body{
     font-weight: 700;
     color: #fff;
     font-style: italic;
+}
+
+.navbar .navbar-image {
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
 }
 
 .navbar  .navbar-logo span{
