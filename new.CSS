@@ -13,9 +13,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f804f8;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    background-color: rgb(250, 6, 230, 0.8);
+    border-bottom: 2px solid#000000;
+    padding: 1rem;
+    z-index: 1000;
 }
 
 .brand {
@@ -38,7 +39,7 @@ body {
 
 .menu a {
     text-decoration: none;
-    color: #1f1f1f;
+    color: #fefafa;
     font-weight: 600;
     padding: 1rem 0;
     border-bottom: 1px solid transparent;
