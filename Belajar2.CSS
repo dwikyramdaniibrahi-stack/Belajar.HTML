@@ -25,7 +25,7 @@ body{
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 7%;
-    background-color:rgb(1,1,1, 0.8);
+    background-color:rgba(41, 40, 40, 0.8);
     border-bottom: 3px solid #ac8a5a;
     position: fixed;
     top: 0;
@@ -35,9 +35,9 @@ body{
 }
 
 .navbar .navbar-logo {
-    font-size: 2rem;
+    font-size: 5rem;
     font-weight: 700;
-    color: #fff;
+    color: #c8c6c6;
     font-style: italic;
 }
 
@@ -52,10 +52,12 @@ body{
 }
 
 .navbar .navbar-nav a{
-    color: #fff;
+    color: #f3ecec;
     display: inline-block;
     font-size: 1.4rem;
     margin: 0 1rem;
+    margin-right: 0;
+   
 
 }
 
@@ -65,13 +67,97 @@ body{
 
 .navbar .navbar-nav a::after{
     content:'' ;
-    display: block;
+    display: flex;
     padding-bottom: 0.5rem;
     border-bottom: 0.1rem solid var(--primary);
     transform:scaleX(0);
     transition:0.2s linear;
     
 }
+.navbar-login {
+    padding: 0.7rem 1.4rem;
+    border: 1px solid var(--primary);
+    border-radius: 0.4rem;
+    background: var(--primary);
+    color: #211b17;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.navbar-login:hover {
+    background: #e1b875;
+}
+
+.login-dialog {
+    width: min(90vw, 38rem);
+    max-width: none;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0.8rem;
+    background: transparent;
+}
+
+.login-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.login-form {
+    position: relative;
+    width: 100%;
+    padding: 2.5rem;
+    display: grid;
+    gap: 0.8rem;
+    background: #514646;
+    border: 1px solid var(--primary);
+    border-radius: 0.8rem;
+}
+
+.login-form h1 {
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #e1b875;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #8d7b68;
+    border-radius: 0.4rem;
+    background: #fff;
+    color: #222;
+}
+
+.login-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 1rem;
+    background: transparent;
+    color: #fff;
+    font-size: 2.6rem;
+    cursor: pointer;
+}
+
+.login-button {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.4rem;
+    background: var(--primary);
+    color: #211b17;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background: #e1b875;
+}
+
+.login-message {
+    min-height: 1.5rem;
+    text-align: center;
+    color: #f0ce91;
+}
+
 
 .navbar  .navbar-nav a:hover::after {
     transform:scaleX(0.5);
@@ -80,7 +166,7 @@ body{
 
 .navbar .navbar-extra a {
     color: #fff;
-    margin:0 0.5rem;
+    margin:0 0,5rem;
 }
 
 .navbar .navbar-extra a:hover{
@@ -115,7 +201,7 @@ body{
         position: absolute;
         top: 100%;
         right: -100%;
-        background-color: #fff;
+        background-color: #efebeb;
         width: 30rem;
         height: 100vh;
         transition:0.3s;

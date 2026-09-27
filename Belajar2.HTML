@@ -24,20 +24,32 @@
             <div class="navbar-extra">
                 <a href="#" id="search"><i data-feather="search"></i></a>
                 <a href="#" id="Shopping-cart"><i data-feather="shopping-cart"></i></a>
+                <button type="button" class="navbar-login" id="loginOpen">Login</button>
                 <a href="#" id="Menu"><i data-feather="menu"></i></a>
             </div>
         
 
 
      </nav>
-    <!-- Navbar END -->
-<!-- Feather Icons -->
+
+      <dialog class="login-dialog" id="loginDialog" aria-labelledby="loginTitle">
+          <form class="login-form" id="loginForm">
+                <button type="button" class="login-close" id="loginClose" aria-label="Tutup form login">&times;</button>
+                <h1 id="loginTitle">Login</h1>
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" placeholder="Masukkan email" required>
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password" placeholder="Masukkan password" minlength="6" required>
+                <button type="submit" class="login-button">Masuk</button>
+                <p class="login-message" id="loginMessage" role="status"></p>
+          </form>
+      </dialog>
+
     <script>
       feather.replace();
     </script>
 
-    <!-- JAVA SCRIpt -->
      <script src="script2.js"></script>
- 
+
 </body>
 </html>
