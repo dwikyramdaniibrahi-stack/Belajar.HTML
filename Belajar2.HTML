@@ -33,13 +33,13 @@
      </nav>
 
       <dialog class="login-dialog" id="loginDialog" aria-labelledby="loginTitle">
-          <form class="login-form" id="loginForm">
+          <form class="login-form" id="loginForm" action="login.php" method="post">
                 <button type="button" class="login-close" id="loginClose" aria-label="Tutup form login">&times;</button>
                 <h1 id="loginTitle">Login</h1>
-                <label for="username">nama</label>
-                <input type="Username" id="username" name="user" placeholder="Masukkan nama" required>
+                <label for="username">Nama pengguna</label>
+                <input type="text" id="username" name="username" placeholder="Masukkan nama pengguna" autocomplete="username" required>
                 <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" name="password" placeholder="Masukkan password" minlength="6" required>
+                <input type="password" id="loginPassword" name="password" placeholder="Masukkan password" autocomplete="current-password" required>
                 <button type="submit" class="login-button">Masuk</button>
                 <p class="login-message" id="loginMessage" role="status"></p>
           </form>

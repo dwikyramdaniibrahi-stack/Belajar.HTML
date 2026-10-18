@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Kedai Kopi Dwiky</title>
+    <link rel="stylesheet" href="Belajar2.CSS">
+    <style>
+        .beranda-content {
+            min-height: 100vh;
+            display: grid;
+            place-content: center;
+            justify-items: center;
+            gap: 1.5rem;
+            padding: 12rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .beranda-content h1 {
+            color: #e1b875;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+        }
+
+        .beranda-content p {
+            max-width: 60rem;
+            font-size: 1.8rem;
+            line-height: 1.6;
+        }
+
+        .beranda-link {
+            display: inline-block;
+            padding: 1rem 1.6rem;
+            border-radius: 0.4rem;
+            background: #d09c52;
+            color: #211b17;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <img class="navbar-image" src="my-logo.png" alt="Logo Kedai Kopi Dwiky">
+        <a href="Beranda.HTML" class="navbar-logo">Kedai kopi<span>Dwiky</span>.</a>
+        <div class="navbar-nav">
+            <a href="Beranda.HTML">Beranda</a>
+            <form action="logout.php" method="post">
+                <button class="beranda-link" type="submit">Keluar</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="beranda-content">
+        <h1>Selamat datang di Kedai Kopi Dwiky</h1>
+        <p>Login berhasil. Anda sudah masuk ke halaman beranda.</p>
+        <form action="logout.php" method="post">
+            <button class="beranda-link" type="submit">Keluar dan ganti akun</button>
+        </form>
+    </main>
+</body>
+</html>
