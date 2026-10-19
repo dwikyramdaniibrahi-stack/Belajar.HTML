@@ -15,7 +15,7 @@
 body{
     font-family:'poppins' sans-serif;
     background: var(--bg);
-    color: #fff;
+    color: #ec0909;
 } 
 
 
@@ -56,8 +56,7 @@ body{
     display: inline-block;
     font-size: 1.4rem;
     margin: 0 1rem;
-    margin-right: 0;
-   
+    margin-right: 15px;
 
 }
 
