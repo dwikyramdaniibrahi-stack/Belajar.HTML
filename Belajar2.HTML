@@ -33,16 +33,36 @@
      </nav>
 
       <dialog class="login-dialog" id="loginDialog" aria-labelledby="loginTitle">
+        <button type="button" class="login-close" id="loginClose" aria-label="Tutup form">&times;</button>
           <form class="login-form" id="loginForm" action="login.php" method="post">
-                <button type="button" class="login-close" id="loginClose" aria-label="Tutup form login">&times;</button>
                 <h1 id="loginTitle">Login</h1>
                 <label for="username">Nama pengguna</label>
                 <input type="text" id="username" name="username" placeholder="Masukkan nama pengguna" autocomplete="username" required>
                 <label for="loginPassword">Password</label>
                 <input type="password" id="loginPassword" name="password" placeholder="Masukkan password" autocomplete="current-password" required>
                 <button type="submit" class="login-button">Masuk</button>
+            <button type="button" class="login-switch" id="showRegister">Belum punya akun? Daftar</button>
                 <p class="login-message" id="loginMessage" role="status"></p>
           </form>
+
+        <form class="login-form" id="registerForm" action="register.php" method="post" hidden>
+            <h1>Buat akun</h1>
+            <label for="registerUsername">Nama pengguna</label>
+            <input type="text" id="registerUsername" name="username" placeholder="Buat nama pengguna" autocomplete="username" maxlength="100" required>
+            <label for="registerPassword">Password</label>
+            <input type="password" id="registerPassword" name="password" placeholder="Buat password (minimal 8 karakter)" autocomplete="new-password" minlength="8" required>
+            <label for="province">Provinsi</label>
+            <select id="province" name="province" required disabled>
+              <option value="" selected>Pilih provinsi</option>
+            </select>
+            <label for="regionName">Kabupaten/Kota</label>
+            <select id="regionName" name="region_name" required disabled>
+              <option value="" selected>Pilih provinsi terlebih dahulu</option>
+            </select>
+            <button type="submit" class="login-button">Daftar</button>
+            <button type="button" class="login-switch" id="showLogin">Sudah punya akun? Masuk</button>
+            <p class="login-message" id="registerMessage" role="status"></p>
+        </form>
       </dialog>
 
     <script>

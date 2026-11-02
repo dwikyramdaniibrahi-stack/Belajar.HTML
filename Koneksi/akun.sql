@@ -6,7 +6,9 @@ USE kedai_kopi;
 
 CREATE TABLE IF NOT EXISTS `login` (
     username VARCHAR(100) NOT NULL PRIMARY KEY,
-    `password` VARCHAR(255) NOT NULL
+    `password` VARCHAR(255) NOT NULL,
+    province VARCHAR(100) NOT NULL DEFAULT '',
+    `Kabupaten` VARCHAR(150) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci;

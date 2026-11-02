@@ -1,0 +1,3 @@
+ALTER TABLE `login`
+    ADD COLUMN province VARCHAR(100) NOT NULL DEFAULT '' AFTER `password`,
+    ADD COLUMN `Kabupaten` VARCHAR(150) NOT NULL DEFAULT '' AFTER province;
