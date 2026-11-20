@@ -19,6 +19,9 @@
                 <a class="side-link active" href="#dashboard" data-view="dashboard" aria-label="Dashboard" title="Dashboard" aria-current="page">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
                 </a>
+                <a class="side-link" href="#menu" data-view="menu" aria-label="Menu" title="Menu">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                </a>
                 <a class="side-link" href="#penjualan" data-view="penjualan" aria-label="Penjualan" title="Penjualan">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/><path d="M16 6h4v4"/></svg>
                 </a>
@@ -50,15 +53,17 @@
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
                         <input type="date" value="2026-10-19" aria-label="Tanggal laporan">
                     </label>
-                    <button class="avatar" type="button" aria-label="Profil pengguna">D</button>
+                    <button class="avatar" type="button" aria-label="Profil pengguna">
+                        <img src="my-logo.png" alt="">
+                    </button>
                 </div>
             </header>
 
             <section class="page-view" id="dashboard-view" aria-label="Dashboard">
             <section class="welcome-banner" aria-label="Sambutan dashboard">
                 <div class="welcome-copy">
-                    <p class="welcome-kicker">KEDAI KOPI DWIKY · DASHBOARD</p>
-                    <h2>Halo, Dwiky <span aria-hidden="true">☕</span></h2>
+                    <p class="welcome-kicker">HALO DWIKY</p>
+                    <h2>KEDAI KOPI DWIKY <span aria-hidden="true">☕</span></h2>
                     <a class="welcome-cta" href="#penjualan" data-view="penjualan">Lihat laporan penjualan <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="welcome-art" aria-hidden="true">
@@ -92,25 +97,80 @@
                     <div class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M5 8h14l1 12H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
                     </div>
-                    <div><p class="stat-label">Pesanan selesai</p><p class="stat-value">248</p><p class="stat-note"><span class="trend up">↗ 8,2%</span> dari bulan lalu</p></div>
+                    <div><p class="stat-label">Pesanan selesai</p><p class="stat-value">123</p><p class="stat-note"><span class="trend up">↗ 8,2%</span> dari bulan lalu</p></div>
                     <span class="stat-accent" aria-hidden="true"></span>
                 </article>
                 <article class="stat-card stat-products">
                     <div class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M4 7h16l-1 14H5L4 7Z"/><path d="M9 7a3 3 0 0 1 6 0M8 11v6m4-6v6m4-6v6"/></svg>
                     </div>
-                    <div><p class="stat-label">Menu tersedia</p><p class="stat-value">32</p><p class="stat-note">4 kategori menu</p></div>
+                    <div><p class="stat-label">Menu tersedia</p><p class="stat-value">10</p><p class="stat-note">3 kategori menu</p></div>
                     <span class="stat-accent" aria-hidden="true"></span>
                 </article>
                 <article class="stat-card stat-customers">
                     <div class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
-                    <div><p class="stat-label">Pelanggan</p><p class="stat-value">186</p><p class="stat-note"><span class="trend up">↗ 5,4%</span> bulan ini</p></div>
+                    <div><p class="stat-label">Pelanggan</p><p class="stat-value">92</p><p class="stat-note"><span class="trend up">↗ 5,4%</span> bulan ini</p></div>
                     <span class="stat-accent" aria-hidden="true"></span>
                 </article>
             </section>
 
+            </section>
+
+            <section class="page-view" id="menu-view" aria-label="Menu" hidden>
+                <div class="menu-intro">
+                    <p>Contoh menu dan harga. Silakan sesuaikan dengan daftar menu kedai.</p>
+                </div>
+                <div class="menu-grid">
+                    <article class="panel menu-category">
+                        <div class="menu-category-heading">
+                            <span class="menu-category-icon" aria-hidden="true">☕</span>
+                            <div><h2>Kopi</h2><p>Minuman berbahan kopi</p></div>
+                        </div>
+                        <ul class="menu-items">
+                            <li class="menu-item" data-menu-id="kopi-susu-dwiky" data-price="18000"><span class="menu-item-name">Kopi Susu Dwiky</span><strong>Rp 18.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Kopi Susu Dwiky ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="butterscoth-mutii" data-price="12000"><span class="menu-item-name">Butterscoth Mutii</span><strong>Rp 12.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Butterscoth Mutii ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="americano" data-price="15000"><span class="menu-item-name">Americano</span><strong>Rp 15.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Americano ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="cappuccino" data-price="20000"><span class="menu-item-name">Cappuccino</span><strong>Rp 20.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Cappuccino ke keranjang">+</button></li>
+                        </ul>
+                    </article>
+                    <article class="panel menu-category">
+                        <div class="menu-category-heading">
+                            <span class="menu-category-icon noncoffee-icon" aria-hidden="true">🥤</span>
+                            <div><h2>Non-kopi</h2><p>Minuman tanpa kopi</p></div>
+                        </div>
+                        <ul class="menu-items">
+                            <li class="menu-item" data-menu-id="matcha-latte-suci" data-price="22000"><span class="menu-item-name">Matcha Latte Suci</span><strong>Rp 22.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Matcha Latte Suci ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="cokelat-premium" data-price="20000"><span class="menu-item-name">Cokelat Premium</span><strong>Rp 20.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Cokelat Premium ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="taro-latte" data-price="20000"><span class="menu-item-name">Taro Latte</span><strong>Rp 20.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Taro Latte ke keranjang">+</button></li>
+                        </ul>
+                    </article>
+                    <article class="panel menu-category">
+                        <div class="menu-category-heading">
+                            <span class="menu-category-icon food-icon" aria-hidden="true">🍽</span>
+                            <div><h2>Makanan</h2><p>Camilan dan makanan</p></div>
+                        </div>
+                        <ul class="menu-items">
+                            <li class="menu-item" data-menu-id="roti-bakar-cokelat" data-price="18000"><span class="menu-item-name">Roti Bakar Cokelat</span><strong>Rp 18.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Roti Bakar Cokelat ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="pisang-goreng" data-price="15000"><span class="menu-item-name">Pisang Goreng</span><strong>Rp 15.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Pisang Goreng ke keranjang">+</button></li>
+                            <li class="menu-item" data-menu-id="kentang-goreng" data-price="17000"><span class="menu-item-name">Kentang Goreng</span><strong>Rp 17.000</strong><button class="menu-add-button" type="button" data-add-menu aria-label="Tambah Kentang Goreng ke keranjang">+</button></li>
+                        </ul>
+                    </article>
+                </div>
+                <section class="panel cart-panel" aria-labelledby="cartTitle">
+                    <div class="panel-heading">
+                        <div><h2 id="cartTitle">Keranjang pesanan</h2><p>Pesanan akan tercatat atas username akun yang sedang masuk.</p></div>
+                        <span class="cart-count" data-cart-count>0 item</span>
+                    </div>
+                    <p class="cart-empty" data-cart-empty>Keranjang masih kosong. Tambahkan menu untuk mulai memesan.</p>
+                    <ul class="cart-items" data-cart-items hidden></ul>
+                    <div class="cart-summary" data-cart-summary hidden>
+                        <div><span>Total pesanan</span><strong data-cart-total>Rp 0</strong></div>
+                        <button class="place-order-button" type="button" data-place-order disabled>Pesan sekarang</button>
+                    </div>
+                    <p class="order-feedback" data-order-feedback role="status" aria-live="polite"></p>
+                </section>
             </section>
 
             <section class="page-view" id="penjualan-view" aria-label="Penjualan" hidden>
@@ -159,6 +219,7 @@
             <section class="panel activity-panel activity-page-panel">
                     <div class="panel-heading"><div><h2>Aktivitas terbaru</h2><p>Riwayat pembaruan dari kedai</p></div></div>
                     <div class="activity-list">
+                        <div data-order-activities></div>
                         <div class="activity-item"><span class="activity-icon icon-order">✓</span><div><strong>Pesanan selesai</strong><p>Pesanan #DW-0248 telah diselesaikan</p></div><time>5 mnt</time></div>
                         <div class="activity-item"><span class="activity-icon icon-stock">＋</span><div><strong>Stok diperbarui</strong><p>Biji kopi Arabika ditambahkan</p></div><time>28 mnt</time></div>
                         <div class="activity-item"><span class="activity-icon icon-customer">☆</span><div><strong>Akun pelanggan</strong><p>Username terdaftar: <span data-activity-customer>Memuat...</span></p></div><time>1 jam</time></div>

@@ -111,7 +111,10 @@ provinceSelect.addEventListener('change', async () => {
 const loginStatus = new URLSearchParams(window.location.search).get('login');
 const registerStatus = new URLSearchParams(window.location.search).get('register');
 
-if (loginStatus === 'invalid') {
+if (loginStatus === 'required') {
+    loginMessage.textContent = 'Masuk terlebih dahulu untuk melanjutkan pesanan Anda.';
+    loginDialog.showModal();
+} else if (loginStatus === 'invalid') {
     loginMessage.textContent = 'Nama pengguna atau password salah. Silakan coba lagi.';
     loginDialog.showModal();
 } else if (loginStatus === 'error') {
