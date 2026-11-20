@@ -12,11 +12,19 @@ function respond(int $status, array $data): void
     exit;
 }
 
-if (empty($_SESSION['username']) || !is_string($_SESSION['username'])) {
-    respond(401, ['error' => 'Silakan masuk terlebih dahulu untuk memesan.']);
+function isOrderAdmin(mysqli $connection, string $username): bool
+{
+    $stmt = $connection->prepare('SELECT `role` FROM `login` WHERE username = ? LIMIT 1');
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $account = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    return ($account['role'] ?? null) === 'admin';
 }
 
-$username = $_SESSION['username'];
+$isAuthenticated = isset($_SESSION['username']) && is_string($_SESSION['username']);
+$username = $isAuthenticated ? $_SESSION['username'] : null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (empty($_SESSION['csrf_token'])) {
@@ -25,19 +33,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     try {
         require_once __DIR__ . '/Koneksi/Koneksi.php';
-        $stmt = $koneksi->prepare(
-            'SELECT p.id, p.username, p.total, p.status, p.dibuat_pada, '
-            . 'GROUP_CONCAT(CONCAT(d.nama_menu, \' × \', d.jumlah) '
-            . 'ORDER BY d.id SEPARATOR \', \') AS ringkasan_menu '
-            . 'FROM pesanan p '
-            . 'LEFT JOIN detail_pesanan d ON d.pesanan_id = p.id '
-            . 'GROUP BY p.id '
-            . 'ORDER BY p.dibuat_pada DESC, p.id DESC LIMIT 20'
-        );
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $orders = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $canManageOrders = $isAuthenticated && is_string($username)
+            ? isOrderAdmin($koneksi, $username)
+            : false;
+        $orders = [];
+
+        if ($canManageOrders) {
+            $query = 'SELECT p.id, p.username, p.nama_pesanan, p.total, p.status, p.dibuat_pada, '
+                . 'GROUP_CONCAT(CONCAT(d.nama_menu, \' × \', d.jumlah) '
+                . 'ORDER BY d.id SEPARATOR \', \') AS ringkasan_menu '
+                . 'FROM pesanan p '
+                . 'LEFT JOIN detail_pesanan d ON d.pesanan_id = p.id '
+                . 'GROUP BY p.id ORDER BY p.dibuat_pada DESC, p.id DESC LIMIT 20';
+            $stmt = $koneksi->prepare($query);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $orders = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+        }
     } catch (mysqli_sql_exception $exception) {
         error_log('Order list database error: ' . $exception->getMessage());
         respond(500, ['error' => 'Pesanan belum dapat dimuat.']);
@@ -45,6 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     respond(200, [
         'csrf_token' => $_SESSION['csrf_token'],
+        'authenticated' => $isAuthenticated,
+        'can_manage_orders' => $canManageOrders,
+        'role' => !$isAuthenticated ? 'tamu' : ($canManageOrders ? 'admin' : 'pelanggan'),
         'username' => $username,
         'orders' => $orders,
     ]);
@@ -69,6 +85,57 @@ if (
     respond(403, ['error' => 'Sesi pesanan tidak valid. Muat ulang halaman lalu coba lagi.']);
 }
 
+if (($payload['action'] ?? null) === 'update_status') {
+    if (!$isAuthenticated || !is_string($username)) {
+        respond(401, ['error' => 'Masuk sebagai admin untuk mengubah status pesanan.']);
+    }
+
+    $orderId = $payload['order_id'] ?? null;
+    $newStatus = $payload['status'] ?? null;
+    if (
+        !is_int($orderId)
+        || $orderId < 1
+        || !is_string($newStatus)
+        || !in_array($newStatus, ['Diproses', 'Selesai', 'Dibatalkan'], true)
+    ) {
+        respond(422, ['error' => 'Status atau pesanan tidak valid.']);
+    }
+
+    try {
+        require_once __DIR__ . '/Koneksi/Koneksi.php';
+        if (!isOrderAdmin($koneksi, $username)) {
+            respond(403, ['error' => 'Hanya admin yang dapat mengubah status pesanan.']);
+        }
+
+        $stmt = $koneksi->prepare('UPDATE pesanan SET status = ? WHERE id = ?');
+        $stmt->bind_param('si', $newStatus, $orderId);
+        $stmt->execute();
+        $changedRows = $stmt->affected_rows;
+        $stmt->close();
+
+        if ($changedRows === 0) {
+            $stmt = $koneksi->prepare('SELECT id FROM pesanan WHERE id = ? LIMIT 1');
+            $stmt->bind_param('i', $orderId);
+            $stmt->execute();
+            $orderExists = $stmt->get_result()->fetch_assoc() !== null;
+            $stmt->close();
+            if (!$orderExists) {
+                respond(404, ['error' => 'Pesanan tidak ditemukan.']);
+            }
+        }
+    } catch (mysqli_sql_exception $exception) {
+        error_log('Order status update database error: ' . $exception->getMessage());
+        respond(500, ['error' => 'Status pesanan gagal diperbarui.']);
+    }
+
+    respond(200, [
+        'order' => [
+            'id' => $orderId,
+            'status' => $newStatus,
+        ],
+    ]);
+}
+
 $catalog = [
     'kopi-susu-dwiky' => ['name' => 'Kopi Susu Dwiky', 'category' => 'Kopi', 'price' => 18000],
     'butterscoth-mutii' => ['name' => 'Butterscoth Mutii', 'category' => 'Kopi', 'price' => 12000],
@@ -85,6 +152,38 @@ $catalog = [
 $items = $payload['items'] ?? null;
 if (!is_array($items) || count($items) < 1 || count($items) > count($catalog)) {
     respond(422, ['error' => 'Pilih setidaknya satu menu untuk dipesan.']);
+}
+
+$orderUsername = $username;
+$guestSessionId = null;
+if (!$isAuthenticated) {
+    $customerName = $payload['customer_name'] ?? 'Pelanggan';
+    if (!is_string($customerName)) {
+        respond(422, ['error' => 'Nama pemesan tidak valid.']);
+    }
+
+    $orderUsername = trim($customerName);
+    if ($orderUsername === '') {
+        $orderUsername = 'Pelanggan';
+    }
+    if (mb_strlen($orderUsername, 'UTF-8') > 100) {
+        respond(422, ['error' => 'Nama pemesan maksimal 100 karakter.']);
+    }
+    $guestSessionId = session_id();
+}
+
+$orderName = $payload['order_name'] ?? null;
+if ($orderName !== null && !is_string($orderName)) {
+    respond(422, ['error' => 'Nama pesanan tidak valid.']);
+}
+if (is_string($orderName)) {
+    $orderName = trim($orderName);
+    if (mb_strlen($orderName, 'UTF-8') > 100) {
+        respond(422, ['error' => 'Nama pesanan maksimal 100 karakter.']);
+    }
+    if ($orderName === '') {
+        $orderName = null;
+    }
 }
 
 $validatedItems = [];
@@ -123,9 +222,9 @@ try {
     $transactionStarted = true;
 
     $stmt = $koneksi->prepare(
-        'INSERT INTO pesanan (username, total) VALUES (?, ?)'
+        'INSERT INTO pesanan (username, total, guest_session_id, nama_pesanan) VALUES (?, ?, ?, ?)'
     );
-    $stmt->bind_param('si', $username, $total);
+    $stmt->bind_param('siss', $orderUsername, $total, $guestSessionId, $orderName);
     $stmt->execute();
     $orderId = $koneksi->insert_id;
     $stmt->close();
@@ -163,7 +262,9 @@ respond(201, [
     'order' => [
         'id' => $orderId,
         'code' => 'DW-' . str_pad((string) $orderId, 6, '0', STR_PAD_LEFT),
-        'username' => $username,
+        'username' => $orderUsername,
+        'nama_pesanan' => $orderName,
+        'authenticated' => $isAuthenticated,
         'total' => $total,
         'status' => 'Diproses',
         'dibuat_pada' => date('Y-m-d H:i:s'),

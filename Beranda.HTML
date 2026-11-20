@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f5f2ed">
     <title>Dashboard - Kedai Kopi Dwiky</title>
-    <link rel="stylesheet" href="Beranda.CSS">
+    <link rel="stylesheet" href="Beranda.CSS?v=customer-menu-only-2">
 </head>
 <body>
     <div class="dashboard">
@@ -16,24 +16,43 @@
             </a>
 
             <nav class="side-nav" aria-label="Navigasi dashboard">
-                <a class="side-link active" href="#dashboard" data-view="dashboard" aria-label="Dashboard" title="Dashboard" aria-current="page">
+                <a class="side-link" href="#dashboard" data-view="dashboard" data-admin-only hidden aria-label="Dashboard" title="Dashboard">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
                 </a>
-                <a class="side-link" href="#menu" data-view="menu" aria-label="Menu" title="Menu">
+                <a class="side-link active" href="#menu" data-view="menu" aria-label="Menu" title="Menu" aria-current="page">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
                 </a>
-                <a class="side-link" href="#penjualan" data-view="penjualan" aria-label="Penjualan" title="Penjualan">
+                <a class="side-link" href="#penjualan" data-view="penjualan" data-admin-only hidden aria-label="Penjualan" title="Penjualan">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/><path d="M16 6h4v4"/></svg>
                 </a>
-                <a class="side-link" href="#pesanan" data-view="pesanan" aria-label="Pesanan" title="Pesanan">
+                <a class="side-link" href="#pesanan" data-view="pesanan" data-admin-only hidden aria-label="Pesanan" title="Pesanan">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 12H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
                 </a>
-                <a class="side-link" href="#aktivitas" data-view="aktivitas" aria-label="Aktivitas" title="Aktivitas">
+                <a class="side-link" href="#aktivitas" data-view="aktivitas" data-admin-only hidden aria-label="Aktivitas" title="Aktivitas">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5l3 2"/><circle cx="12" cy="12" r="9"/><path d="M12 3v2m9 7h-2M5 12H3m9 9v-2"/></svg>
                 </a>
             </nav>
 
             <form class="sidebar-logout" action="logout.php" method="post">
+                <details class="profile-menu">
+                    <summary class="avatar" aria-label="Lihat akun dan status" title="Lihat akun dan status">
+                        <span data-profile-avatar-initials aria-hidden="true">?</span>
+                    </summary>
+                    <div class="profile-card" role="group" aria-label="Informasi akun">
+                        <div class="profile-card-identity">
+                            <span class="profile-initials" data-profile-initials aria-hidden="true">?</span>
+                            <div>
+                                <span class="profile-card-label">Akun yang digunakan</span>
+                                <strong data-profile-username>Memuat akun...</strong>
+                            </div>
+                        </div>
+                        <div class="profile-role-row">
+                            <span>Status akun</span>
+                            <span class="profile-role-badge" data-profile-role data-role="guest">Memuat...</span>
+                        </div>
+                        <p class="profile-note" data-profile-note>Memuat informasi akun.</p>
+                    </div>
+                </details>
                 <button class="side-link logout-button" type="submit" aria-label="Keluar" title="Keluar">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
                 </button>
@@ -44,22 +63,19 @@
             <header class="topbar">
                 <div class="page-heading">
                     <p class="eyebrow">KEDAI KOPI DWIKY</p>
-                    <h1 id="pageTitle">Dashboard</h1>
-                    <p class="page-subtitle" id="pageSubtitle">Ringkasan aktivitas kedai hari ini.</p>
+                    <h1 id="pageTitle">Menu</h1>
+                    <p class="page-subtitle" id="pageSubtitle">Lihat pilihan kopi, non-kopi, dan makanan.</p>
                 </div>
                 <div class="topbar-actions">
-                    <label class="date-filter">
+                    <label class="date-filter" data-admin-only hidden>
                         <span class="sr-only">Tanggal laporan</span>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
                         <input type="date" value="2026-10-19" aria-label="Tanggal laporan">
                     </label>
-                    <button class="avatar" type="button" aria-label="Profil pengguna">
-                        <img src="my-logo.png" alt="">
-                    </button>
                 </div>
             </header>
 
-            <section class="page-view" id="dashboard-view" aria-label="Dashboard">
+            <section class="page-view" id="dashboard-view" aria-label="Dashboard" hidden>
             <section class="welcome-banner" aria-label="Sambutan dashboard">
                 <div class="welcome-copy">
                     <p class="welcome-kicker">HALO DWIKY</p>
@@ -118,9 +134,9 @@
 
             </section>
 
-            <section class="page-view" id="menu-view" aria-label="Menu" hidden>
+            <section class="page-view" id="menu-view" aria-label="Menu">
                 <div class="menu-intro">
-                    <p>Contoh menu dan harga. Silakan sesuaikan dengan daftar menu kedai.</p>
+                    <p>Silakan pilih menu yang ingin Anda pesan.</p>
                 </div>
                 <div class="menu-grid">
                     <article class="panel menu-category">
@@ -159,15 +175,52 @@
                     </article>
                 </div>
                 <section class="panel cart-panel" aria-labelledby="cartTitle">
-                    <div class="panel-heading">
-                        <div><h2 id="cartTitle">Keranjang pesanan</h2><p>Pesanan akan tercatat atas username akun yang sedang masuk.</p></div>
+                    <div class="cart-panel-heading">
+                        <div class="cart-heading-group">
+                            <span class="cart-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21 8H6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="10" cy="20" r="1.2" fill="currentColor"/>
+                                    <circle cx="18" cy="20" r="1.2" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <div class="cart-heading-copy">
+                                <span class="cart-eyebrow">PESANAN ANDA</span>
+                                <h2 id="cartTitle">Keranjang pesanan</h2>
+                                <p>Pilih Menu yang ingin Anda pesan.</p>
+                            </div>
+                        </div>
                         <span class="cart-count" data-cart-count>0 item</span>
                     </div>
-                    <p class="cart-empty" data-cart-empty>Keranjang masih kosong. Tambahkan menu untuk mulai memesan.</p>
+                    <label class="guest-name-field" data-guest-name-field hidden>
+                        <span>Nama pemesan (opsional)</span>
+                        <input type="text" data-guest-name autocomplete="name" maxlength="100" placeholder="Kosongkan jika tidak ingin mengisi nama">
+                    </label>
+                    <label class="order-name-field">
+                        <span>Nama/judul pesanan (opsional)</span>
+                        <input type="text" data-order-name maxlength="100" placeholder="Text">
+                    </label>
+                    <div class="cart-empty" data-cart-empty>
+                        <span class="cart-empty-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M4 8h16l-1.2 12H5.2L4 8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                                <path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="cart-empty-copy">
+                            <strong>Keranjang masih kosong</strong>
+                            <span>Pilih menu favoritmu, lalu pesan langsung dari sini.</span>
+                        </span>
+                    </div>
                     <ul class="cart-items" data-cart-items hidden></ul>
                     <div class="cart-summary" data-cart-summary hidden>
-                        <div><span>Total pesanan</span><strong data-cart-total>Rp 0</strong></div>
-                        <button class="place-order-button" type="button" data-place-order disabled>Pesan sekarang</button>
+                        <div class="cart-total-copy"><span>Total pesanan</span><strong data-cart-total>Rp 0</strong></div>
+                        <button class="place-order-button" type="button" data-place-order disabled>
+                            <span>Pesan sekarang</span>
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                     </div>
                     <p class="order-feedback" data-order-feedback role="status" aria-live="polite"></p>
                 </section>
@@ -231,25 +284,23 @@
 
             <section class="page-view" id="pesanan-view" aria-label="Pesanan" hidden>
             <section class="panel orders-panel orders-page-panel">
-                    <div class="panel-heading"><div><h2>Daftar pesanan</h2><p>Nama pelanggan menggunakan username akun terdaftar.</p></div><span class="order-count">248 pesanan</span></div>
+                    <div class="panel-heading"><div><h2>Daftar pesanan</h2><p>Pesanan terbaru yang tersimpan dari menu.</p></div><span class="order-count" data-orders-count>0 pesanan</span></div>
                     <div class="table-wrap">
-                        <table>
-                            <thead><tr><th>Pesanan</th><th>Pelanggan</th><th>Waktu</th><th>Total</th><th>Status</th></tr></thead>
-                            <tbody>
-                                <tr><td class="order-id">#DW-0248</td><td><span class="customer-avatar" data-customer-avatar aria-hidden="true">…</span><span data-customer-name>Memuat...</span></td><td>12.08</td><td>Rp 68.000</td><td><span class="status status-done">Selesai</span></td></tr>
-                                <tr><td class="order-id">#DW-0247</td><td><span class="customer-avatar avatar-gold" data-customer-avatar aria-hidden="true">…</span><span data-customer-name>Memuat...</span></td><td>11.54</td><td>Rp 42.000</td><td><span class="status status-making">Diproses</span></td></tr>
-                                <tr><td class="order-id">#DW-0246</td><td><span class="customer-avatar avatar-green" data-customer-avatar aria-hidden="true">…</span><span data-customer-name>Memuat...</span></td><td>11.38</td><td>Rp 55.000</td><td><span class="status status-done">Selesai</span></td></tr>
-                                <tr><td class="order-id">#DW-0245</td><td><span class="customer-avatar avatar-pink" data-customer-avatar aria-hidden="true">…</span><span data-customer-name>Memuat...</span></td><td>11.15</td><td>Rp 36.000</td><td><span class="status status-cancel">Dibatalkan</span></td></tr>
+                        <table aria-label="Daftar pesanan terbaru">
+                            <thead><tr><th>Pesanan</th><th>Pelanggan</th><th>Menu</th><th>Waktu</th><th>Total</th><th>Status</th></tr></thead>
+                            <tbody data-orders-table>
+                                <tr><td class="orders-empty" colspan="6">Memuat pesanan...</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="table-footer"><span>Menampilkan 4 dari 248 pesanan</span><div class="pagination"><button type="button" aria-label="Halaman sebelumnya">‹</button><button class="current-page" type="button" aria-current="page">1</button><button type="button">2</button><button type="button">3</button><button type="button" aria-label="Halaman berikutnya">›</button></div></div>
+                    <div class="table-footer"><span data-orders-summary>Memuat daftar pesanan...</span></div>
+                    <p class="order-status-feedback" data-order-status-feedback role="status" aria-live="polite"></p>
                 </section>
             </section>
 
-            <section class="dashboard-footer"><span>© 2026 Kedai Kopi Dwiky</span><span>Dashboard penjualan</span></section>
+            <section class="dashboard-footer" data-admin-only hidden><span>© 2026 Kedai Kopi Dwiky</span><span>Dashboard penjualan</span></section>
         </main>
     </div>
-    <script src="Beranda.js"></script>
+    <script src="Beranda.js?v=customer-menu-only-2"></script>
 </body>
 </html>

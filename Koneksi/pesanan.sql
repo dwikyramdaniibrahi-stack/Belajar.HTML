@@ -1,17 +1,34 @@
 USE kedai_kopi;
 
+ALTER TABLE login
+    ADD COLUMN IF NOT EXISTS `role` ENUM('pelanggan', 'admin') NOT NULL DEFAULT 'pelanggan';
+
+UPDATE login
+SET `role` = 'admin'
+WHERE username = 'Dwi';
+
 CREATE TABLE IF NOT EXISTS pesanan (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL,
+    guest_session_id VARCHAR(128) NULL,
+    nama_pesanan VARCHAR(100) NULL,
     total INT UNSIGNED NOT NULL DEFAULT 0,
     status ENUM('Diproses', 'Selesai', 'Dibatalkan') NOT NULL DEFAULT 'Diproses',
     dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     KEY idx_pesanan_username (username),
+    KEY idx_pesanan_guest_session (guest_session_id),
     KEY idx_pesanan_dibuat_pada (dibuat_pada)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE pesanan
+    ADD COLUMN IF NOT EXISTS guest_session_id VARCHAR(128) NULL,
+    ADD KEY IF NOT EXISTS idx_pesanan_guest_session (guest_session_id);
+
+ALTER TABLE pesanan
+    ADD COLUMN IF NOT EXISTS nama_pesanan VARCHAR(100) NULL;
 
 CREATE TABLE IF NOT EXISTS detail_pesanan (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
