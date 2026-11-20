@@ -23,6 +23,167 @@ function isOrderAdmin(mysqli $connection, string $username): bool
     return ($account['role'] ?? null) === 'admin';
 }
 
+function buildSalesReport(
+    mysqli $connection,
+    string $period,
+    DateTimeImmutable $reportDate
+): array {
+    if ($period === 'week') {
+        $periodStart = $reportDate->modify('monday this week');
+        $periodEnd = $periodStart->modify('+7 days');
+        $periodLabel = 'Minggu';
+        $weekdayLabels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+        $buckets = [];
+
+        for ($day = 0; $day < 7; $day++) {
+            $date = $periodStart->modify('+' . $day . ' days');
+            $buckets[$date->format('Y-m-d')] = [
+                'label' => $weekdayLabels[$day],
+                'revenue' => 0,
+                'orders' => 0,
+            ];
+        }
+    } elseif ($period === 'month') {
+        $periodStart = $reportDate->modify('first day of this month');
+        $periodEnd = $periodStart->modify('first day of next month');
+        $periodLabel = 'Bulan';
+        $daysInMonth = (int) $periodStart->format('t');
+        $buckets = [];
+
+        for ($startDay = 1; $startDay <= $daysInMonth; $startDay += 7) {
+            $endDay = min($startDay + 6, $daysInMonth);
+            $bucketNumber = intdiv($startDay - 1, 7) + 1;
+            $buckets[(string) $bucketNumber] = [
+                'label' => $startDay . '–' . $endDay,
+                'revenue' => 0,
+                'orders' => 0,
+            ];
+        }
+    } else {
+        $periodStart = $reportDate->setDate((int) $reportDate->format('Y'), 1, 1);
+        $periodEnd = $periodStart->modify('+1 year');
+        $periodLabel = 'Tahun';
+        $monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $buckets = [];
+
+        for ($month = 1; $month <= 12; $month++) {
+            $bucketKey = $periodStart->setDate((int) $periodStart->format('Y'), $month, 1)->format('Y-m');
+            $buckets[$bucketKey] = [
+                'label' => $monthLabels[$month - 1],
+                'revenue' => 0,
+                'orders' => 0,
+            ];
+        }
+    }
+
+    $startDateTime = $periodStart->format('Y-m-d 00:00:00');
+    $endDateTime = $periodEnd->format('Y-m-d 00:00:00');
+    $completedStatus = 'Selesai';
+    $stmt = $connection->prepare(
+        'SELECT DATE(p.dibuat_pada) AS sale_date, SUM(p.total) AS revenue, COUNT(*) AS order_count '
+        . 'FROM pesanan p '
+        . 'WHERE p.status = ? AND p.dibuat_pada >= ? AND p.dibuat_pada < ? '
+        . 'GROUP BY DATE(p.dibuat_pada)'
+    );
+    $stmt->bind_param('sss', $completedStatus, $startDateTime, $endDateTime);
+    $stmt->execute();
+    $dailySales = $stmt->get_result();
+
+    while ($row = $dailySales->fetch_assoc()) {
+        $saleDate = (string) $row['sale_date'];
+        if ($period === 'week') {
+            $bucketKey = $saleDate;
+        } elseif ($period === 'month') {
+            $dayOfMonth = (int) substr($saleDate, 8, 2);
+            $bucketKey = (string) (intdiv($dayOfMonth - 1, 7) + 1);
+        } else {
+            $bucketKey = substr($saleDate, 0, 7);
+        }
+
+        if (isset($buckets[$bucketKey])) {
+            $buckets[$bucketKey]['revenue'] = (int) $row['revenue'];
+            $buckets[$bucketKey]['orders'] = (int) $row['order_count'];
+        }
+    }
+    $stmt->close();
+
+    $stmt = $connection->prepare(
+        'SELECT d.kategori, SUM(d.jumlah) AS quantity '
+        . 'FROM pesanan p '
+        . 'INNER JOIN detail_pesanan d ON d.pesanan_id = p.id '
+        . 'WHERE p.status = ? AND p.dibuat_pada >= ? AND p.dibuat_pada < ? '
+        . 'GROUP BY d.kategori'
+    );
+    $stmt->bind_param('sss', $completedStatus, $startDateTime, $endDateTime);
+    $stmt->execute();
+    $categoryRows = $stmt->get_result();
+    $categories = ['coffee' => 0, 'noncoffee' => 0, 'food' => 0];
+
+    while ($row = $categoryRows->fetch_assoc()) {
+        $category = mb_strtolower(trim((string) $row['kategori']), 'UTF-8');
+        if ($category === 'kopi') {
+            $categories['coffee'] = (int) $row['quantity'];
+        } elseif ($category === 'non-kopi' || $category === 'non kopi') {
+            $categories['noncoffee'] = (int) $row['quantity'];
+        } elseif ($category === 'makanan') {
+            $categories['food'] = (int) $row['quantity'];
+        }
+    }
+    $stmt->close();
+
+    $stmt = $connection->prepare(
+        'SELECT d.nama_menu, SUM(d.jumlah) AS quantity '
+        . 'FROM pesanan p '
+        . 'INNER JOIN detail_pesanan d ON d.pesanan_id = p.id '
+        . 'WHERE p.status = ? AND p.dibuat_pada >= ? AND p.dibuat_pada < ? '
+        . 'GROUP BY d.menu_id, d.nama_menu '
+        . 'ORDER BY quantity DESC, d.nama_menu ASC LIMIT 1'
+    );
+    $stmt->bind_param('sss', $completedStatus, $startDateTime, $endDateTime);
+    $stmt->execute();
+    $bestSeller = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $stmt = $connection->prepare(
+        'SELECT HOUR(p.dibuat_pada) AS sale_hour, COUNT(*) AS order_count '
+        . 'FROM pesanan p '
+        . 'WHERE p.status = ? AND p.dibuat_pada >= ? AND p.dibuat_pada < ? '
+        . 'GROUP BY HOUR(p.dibuat_pada) '
+        . 'ORDER BY order_count DESC, sale_hour ASC LIMIT 1'
+    );
+    $stmt->bind_param('sss', $completedStatus, $startDateTime, $endDateTime);
+    $stmt->execute();
+    $busiestHour = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $totalRevenue = 0;
+    $completedOrders = 0;
+    foreach ($buckets as $bucket) {
+        $totalRevenue += $bucket['revenue'];
+        $completedOrders += $bucket['orders'];
+    }
+
+    $busyHourLabel = 'Belum ada data';
+    if ($busiestHour !== null) {
+        $hour = (int) $busiestHour['sale_hour'];
+        $busyHourLabel = sprintf('%02d.00 – %02d.00', $hour, ($hour + 1) % 24);
+    }
+
+    return [
+        'period' => $period,
+        'period_label' => $periodLabel,
+        'total' => $totalRevenue,
+        'completed_orders' => $completedOrders,
+        'average_transaction' => $completedOrders > 0
+            ? (int) round($totalRevenue / $completedOrders)
+            : 0,
+        'best_seller' => $bestSeller['nama_menu'] ?? null,
+        'busiest_hour' => $busyHourLabel,
+        'categories' => $categories,
+        'buckets' => array_values($buckets),
+    ];
+}
+
 $isAuthenticated = isset($_SESSION['username']) && is_string($_SESSION['username']);
 $username = $isAuthenticated ? $_SESSION['username'] : null;
 
@@ -37,8 +198,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ? isOrderAdmin($koneksi, $username)
             : false;
         $orders = [];
+        $salesReport = null;
 
         if ($canManageOrders) {
+            $period = $_GET['period'] ?? 'month';
+            $reportDateValue = $_GET['date'] ?? date('Y-m-d');
+            if (
+                !is_string($period)
+                || !in_array($period, ['week', 'month', 'year'], true)
+                || !is_string($reportDateValue)
+            ) {
+                respond(422, ['error' => 'Periode laporan tidak valid.']);
+            }
+
+            $reportDate = DateTimeImmutable::createFromFormat('!Y-m-d', $reportDateValue);
+            $dateErrors = DateTimeImmutable::getLastErrors();
+            if (
+                $reportDate === false
+                || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))
+                || $reportDate->format('Y-m-d') !== $reportDateValue
+            ) {
+                respond(422, ['error' => 'Tanggal laporan tidak valid.']);
+            }
+
+            $salesReport = buildSalesReport($koneksi, $period, $reportDate);
             $query = 'SELECT p.id, p.username, p.nama_pesanan, p.total, p.status, p.dibuat_pada, '
                 . 'GROUP_CONCAT(CONCAT(d.nama_menu, \' × \', d.jumlah) '
                 . 'ORDER BY d.id SEPARATOR \', \') AS ringkasan_menu '
@@ -63,6 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'role' => !$isAuthenticated ? 'tamu' : ($canManageOrders ? 'admin' : 'pelanggan'),
         'username' => $username,
         'orders' => $orders,
+        'sales' => $salesReport,
     ]);
 }
 

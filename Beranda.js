@@ -31,8 +31,37 @@ const profileAvatarInitialsElement = document.querySelector('[data-profile-avata
 const profileInitialsElement = document.querySelector('[data-profile-initials]');
 const profileRoleElement = document.querySelector('[data-profile-role]');
 const profileNoteElement = document.querySelector('[data-profile-note]');
+const salesDateInput = document.querySelector('[data-sales-date]');
+const salesPeriodButtons = document.querySelectorAll('[data-sales-period]');
+const salesTotalElements = document.querySelectorAll('[data-sales-total]');
+const salesOrderCountElements = document.querySelectorAll('[data-sales-order-count]');
+const salesPeriodLabels = document.querySelectorAll('[data-sales-period-label]');
+const salesAverageElement = document.querySelector('[data-sales-average]');
+const salesBestSellerElement = document.querySelector('[data-sales-best-seller]');
+const salesBusiestHourElement = document.querySelector('[data-sales-busiest-hour]');
+const salesAxisLabels = document.querySelectorAll('[data-sales-axis]');
+const salesChartElement = document.querySelector('[data-sales-chart]');
+const salesAreaElement = document.querySelector('[data-sales-area]');
+const salesLineElement = document.querySelector('[data-sales-line]');
+const salesBucketLabelsElement = document.querySelector('[data-sales-labels]');
+const salesCategoryChart = document.querySelector('[data-sales-categories]');
+const salesDonut = document.querySelector('[data-sales-donut]');
+const salesCoffeePercentElement = document.querySelector('[data-sales-coffee-percent]');
+const salesCategoryPercentElements = document.querySelectorAll('[data-sales-category-percent]');
+const salesFeedback = document.querySelector('[data-sales-feedback]');
 let accountRole = null;
 let customerUsernamesLoadStarted = false;
+let selectedSalesPeriod = document.querySelector('[data-sales-period].selected')?.dataset.salesPeriod || 'month';
+
+if (salesDateInput) {
+    const today = new Date();
+    const localDate = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, '0'),
+        String(today.getDate()).padStart(2, '0')
+    ].join('-');
+    salesDateInput.value = localDate;
+}
 
 function renderAccountProfile(data) {
     const username = data.authenticated ? data.username.trim() : 'Tamu';
@@ -203,6 +232,141 @@ function formatPrice(amount) {
         currency: 'IDR',
         maximumFractionDigits: 0
     }).format(amount);
+}
+
+function formatCompactAmount(amount) {
+    if (amount >= 1000000) {
+        return `${(amount / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 })} jt`;
+    }
+    if (amount >= 1000) {
+        return `${(amount / 1000).toLocaleString('id-ID', { maximumFractionDigits: 0 })} rb`;
+    }
+    return String(amount);
+}
+
+function isValidSalesReport(sales, expectedPeriod) {
+    return Boolean(
+        sales
+        && sales.period === expectedPeriod
+        && typeof sales.period_label === 'string'
+        && Number.isSafeInteger(sales.total)
+        && sales.total >= 0
+        && Number.isSafeInteger(sales.completed_orders)
+        && sales.completed_orders >= 0
+        && Number.isSafeInteger(sales.average_transaction)
+        && sales.average_transaction >= 0
+        && (sales.best_seller === null || typeof sales.best_seller === 'string')
+        && typeof sales.busiest_hour === 'string'
+        && sales.categories
+        && Number.isSafeInteger(sales.categories.coffee)
+        && Number.isSafeInteger(sales.categories.noncoffee)
+        && Number.isSafeInteger(sales.categories.food)
+        && Array.isArray(sales.buckets)
+        && sales.buckets.length > 0
+        && sales.buckets.every((bucket) => (
+            typeof bucket.label === 'string'
+            && Number.isSafeInteger(bucket.revenue)
+            && bucket.revenue >= 0
+            && Number.isSafeInteger(bucket.orders)
+            && bucket.orders >= 0
+        ))
+    );
+}
+
+function renderSalesReport(sales) {
+    const periodCopy = {
+        week: 'minggu ini',
+        month: 'bulan ini',
+        year: 'tahun ini'
+    }[sales.period];
+    const totalItems = sales.categories.coffee + sales.categories.noncoffee + sales.categories.food;
+    const categoryPercentages = {
+        coffee: totalItems ? Math.round((sales.categories.coffee / totalItems) * 100) : 0,
+        noncoffee: totalItems ? Math.round((sales.categories.noncoffee / totalItems) * 100) : 0,
+        food: totalItems ? Math.round((sales.categories.food / totalItems) * 100) : 0
+    };
+
+    salesTotalElements.forEach((element) => {
+        element.textContent = formatPrice(sales.total);
+    });
+    salesOrderCountElements.forEach((element) => {
+        element.textContent = new Intl.NumberFormat('id-ID').format(sales.completed_orders);
+    });
+    salesPeriodLabels.forEach((element) => {
+        element.textContent = periodCopy;
+    });
+    if (salesAverageElement) {
+        salesAverageElement.textContent = formatPrice(sales.average_transaction);
+    }
+    if (salesBestSellerElement) {
+        salesBestSellerElement.textContent = sales.best_seller || 'Belum ada data';
+    }
+    if (salesBusiestHourElement) {
+        salesBusiestHourElement.textContent = sales.busiest_hour;
+    }
+
+    salesPeriodButtons.forEach((button) => {
+        const isSelected = button.dataset.salesPeriod === sales.period;
+        button.classList.toggle('selected', isSelected);
+        button.setAttribute('aria-pressed', String(isSelected));
+    });
+
+    const revenues = sales.buckets.map((bucket) => bucket.revenue);
+    const maximumRevenue = Math.max(...revenues);
+    const chartMaximum = maximumRevenue || 1;
+    salesAxisLabels.forEach((element, index) => {
+        const axisValue = Math.round(maximumRevenue * (1 - index / (salesAxisLabels.length - 1)));
+        element.textContent = formatCompactAmount(axisValue);
+    });
+
+    const chartPoints = revenues.map((revenue, index) => {
+        const x = (600 * index) / (revenues.length - 1);
+        const y = 196 - (revenue / chartMaximum) * 176;
+        return `${x.toFixed(1)} ${y.toFixed(1)}`;
+    });
+    const linePath = `M${chartPoints.join(' L ')}`;
+    if (salesLineElement && salesAreaElement) {
+        salesLineElement.setAttribute('d', linePath);
+        salesAreaElement.setAttribute('d', `M0 196 L${chartPoints.join(' L ')} L600 196Z`);
+    }
+    if (salesBucketLabelsElement) {
+        salesBucketLabelsElement.replaceChildren(...sales.buckets.map((bucket) => {
+            const label = document.createElement('span');
+            label.textContent = bucket.label;
+            return label;
+        }));
+    }
+    if (salesChartElement) {
+        salesChartElement.setAttribute(
+            'aria-label',
+            `Grafik penjualan pesanan selesai ${periodCopy}. Total ${formatPrice(sales.total)} dari ${sales.completed_orders} pesanan.`
+        );
+    }
+
+    if (salesDonut && salesCategoryChart) {
+        if (totalItems) {
+            const coffeeBoundary = (sales.categories.coffee / totalItems) * 100;
+            const foodBoundary = ((sales.categories.coffee + sales.categories.food) / totalItems) * 100;
+            salesDonut.style.background = `conic-gradient(from -90deg, #a66c43 0% ${coffeeBoundary}%, #719174 ${coffeeBoundary}% ${foodBoundary}%, #d89174 ${foodBoundary}% 100%)`;
+        } else {
+            salesDonut.style.background = '#eee9e3';
+        }
+        salesCoffeePercentElement.textContent = `${categoryPercentages.coffee}%`;
+        salesCategoryPercentElements.forEach((element) => {
+            element.textContent = `${categoryPercentages[element.dataset.salesCategoryPercent]}%`;
+        });
+        salesCategoryChart.setAttribute(
+            'aria-label',
+            `Komposisi menu pesanan selesai: kopi ${categoryPercentages.coffee} persen, makanan ${categoryPercentages.food} persen, non-kopi ${categoryPercentages.noncoffee} persen.`
+        );
+    }
+}
+
+function setSalesFeedback(message) {
+    if (salesFeedback) {
+        salesFeedback.textContent = message;
+        salesFeedback.hidden = message === '';
+    }
 }
 
 function createQuantityButton(label, action, menuId, disabled) {
@@ -477,6 +641,12 @@ ordersTableBody?.addEventListener('change', async (event) => {
         renderOrdersTable(loadedOrders, { canManage: canManageOrders });
         const orderReference = control.getAttribute('aria-label').replace('Ubah status pesanan ', '');
         setOrderStatusFeedback(`Status pesanan ${orderReference} diubah menjadi ${newStatus}.`);
+        try {
+            await loadRecentOrders();
+        } catch (refreshError) {
+            console.error('Status pesanan tersimpan, tetapi laporan penjualan gagal dimuat:', refreshError);
+            setSalesFeedback('Status pesanan tersimpan, tetapi laporan penjualan belum dapat diperbarui.');
+        }
     } catch (error) {
         console.error('Gagal memperbarui status pesanan:', error);
         control.value = previousStatus;
@@ -486,7 +656,11 @@ ordersTableBody?.addEventListener('change', async (event) => {
 });
 
 async function loadRecentOrders() {
-    const response = await fetch('pesanan.php', {
+    const reportParams = new URLSearchParams({
+        period: selectedSalesPeriod,
+        date: salesDateInput.value
+    });
+    const response = await fetch(`pesanan.php?${reportParams}`, {
         headers: { Accept: 'application/json' }
     });
     const data = await response.json();
@@ -506,6 +680,8 @@ async function loadRecentOrders() {
         || (data.authenticated && data.role === 'tamu')
         || (!data.authenticated && data.role !== 'tamu')
         || (data.can_manage_orders !== (data.role === 'admin'))
+        || (data.role === 'admin' && !isValidSalesReport(data.sales, selectedSalesPeriod))
+        || (data.role !== 'admin' && data.sales !== null)
     ) {
         throw new Error('Data aktivitas pesanan dari server tidak sesuai.');
     }
@@ -525,12 +701,39 @@ async function loadRecentOrders() {
     renderRecentOrders(loadedOrders);
     renderOrdersTable(loadedOrders, { canManage: canManageOrders });
     renderCart();
+    if (canManageOrders) {
+        renderSalesReport(data.sales);
+    }
+    setSalesFeedback('');
 
     if (canManageOrders && !customerUsernamesLoadStarted) {
         customerUsernamesLoadStarted = true;
         loadCustomerUsernames().catch(handleCustomerUsernamesError);
     }
 }
+
+async function reloadSalesReport() {
+    try {
+        await loadRecentOrders();
+    } catch (error) {
+        console.error('Gagal memuat laporan penjualan:', error);
+        setSalesFeedback(error.message || 'Laporan penjualan gagal dimuat. Silakan coba lagi.');
+    }
+}
+
+salesPeriodButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        selectedSalesPeriod = button.dataset.salesPeriod;
+        salesPeriodButtons.forEach((periodButton) => {
+            const isSelected = periodButton === button;
+            periodButton.classList.toggle('selected', isSelected);
+            periodButton.setAttribute('aria-pressed', String(isSelected));
+        });
+        reloadSalesReport();
+    });
+});
+
+salesDateInput?.addEventListener('change', reloadSalesReport);
 
 function setOrderFeedback(message, linkType) {
     if (!orderFeedback) {

@@ -913,8 +913,7 @@ a {
     stroke-width: 1;
 }
 
-.area-sales,
-.area-orders {
+.area-sales {
     stroke: none;
 }
 
@@ -922,12 +921,7 @@ a {
     fill: url(#salesFill);
 }
 
-.area-orders {
-    fill: url(#ordersFill);
-}
-
-.line-sales,
-.line-orders {
+.line-sales {
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -936,11 +930,6 @@ a {
 
 .line-sales {
     stroke: #a66c43;
-}
-
-.line-orders {
-    stroke: #e1b46c;
-    stroke-width: 2.5;
 }
 
 .chart-months {
@@ -955,6 +944,16 @@ a {
     gap: 13px;
     padding-top: 14px;
     border-top: 1px solid var(--line);
+}
+
+.sales-report-feedback {
+    margin: 12px 0 0;
+    color: #a64e3c;
+    font-size: 11px;
+}
+
+.sales-report-feedback[hidden] {
+    display: none !important;
 }
 
 .sales-footer > div {
@@ -1020,7 +1019,7 @@ a {
     height: 166px;
     place-items: center;
     border-radius: 50%;
-    background: conic-gradient(from -90deg, #a66c43 0 62%, #719174 62% 76%, #d89174 76% 100%);
+    background: #eee9e3;
     transform: rotate(-20deg);
 }
 
@@ -1057,6 +1056,11 @@ a {
     padding-top: 5px;
     color: #736a61;
     font-size: 10px;
+}
+
+.donut-legend strong {
+    color: var(--ink);
+    font-size: inherit;
 }
 
 .activity-grid {

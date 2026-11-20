@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f5f2ed">
     <title>Dashboard - Kedai Kopi Dwiky</title>
-    <link rel="stylesheet" href="Beranda.CSS?v=customer-menu-only-2">
+    <link rel="stylesheet" href="Beranda.CSS?v=sales-report-1">
 </head>
 <body>
     <div class="dashboard">
@@ -70,7 +70,7 @@
                     <label class="date-filter" data-admin-only hidden>
                         <span class="sr-only">Tanggal laporan</span>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
-                        <input type="date" value="2026-10-19" aria-label="Tanggal laporan">
+                        <input type="date" data-sales-date aria-label="Tanggal laporan">
                     </label>
                 </div>
             </header>
@@ -106,14 +106,14 @@
                     <div class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M4 8h13v7a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8ZM17 10h2a3 3 0 1 1 0 6h-3M8 3v2m5-2v2"/></svg>
                     </div>
-                    <div><p class="stat-label">Total penjualan</p><p class="stat-value">Rp 5,42 jt</p><p class="stat-note"><span class="trend up">↗ 12,8%</span> dari bulan lalu</p></div>
+                    <div><p class="stat-label">Penjualan selesai</p><p class="stat-value" data-sales-total>Rp 0</p><p class="stat-note">Sesuai periode laporan</p></div>
                     <span class="stat-accent" aria-hidden="true"></span>
                 </article>
                 <article class="stat-card stat-orders">
                     <div class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M5 8h14l1 12H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
                     </div>
-                    <div><p class="stat-label">Pesanan selesai</p><p class="stat-value">123</p><p class="stat-note"><span class="trend up">↗ 8,2%</span> dari bulan lalu</p></div>
+                    <div><p class="stat-label">Pesanan selesai</p><p class="stat-value" data-sales-order-count>0</p><p class="stat-note">Sesuai periode laporan</p></div>
                     <span class="stat-accent" aria-hidden="true"></span>
                 </article>
                 <article class="stat-card stat-products">
@@ -231,39 +231,51 @@
                 <article class="panel sales-panel">
                     <div class="panel-heading">
                         <div><h2>Ringkasan penjualan</h2><p>Performa penjualan kedai</p></div>
-                        <div class="period-tabs" aria-label="Periode laporan"><button type="button">Minggu</button><button class="selected" type="button">Bulan</button><button type="button">Tahun</button></div>
+                        <div class="period-tabs" aria-label="Periode laporan">
+                            <button type="button" data-sales-period="week" aria-pressed="false">Minggu</button>
+                            <button class="selected" type="button" data-sales-period="month" aria-pressed="true">Bulan</button>
+                            <button type="button" data-sales-period="year" aria-pressed="false">Tahun</button>
+                        </div>
                     </div>
                     <div class="sales-body">
-                        <div class="sales-total"><strong>Rp 5,42 jt</strong><span>Total pemasukan</span><strong class="orders-total">248</strong><span>Pesanan bulan ini</span><a href="#pesanan" data-view="pesanan" class="summary-link">Lihat pesanan <span aria-hidden="true">→</span></a></div>
-                        <div class="chart-wrap" role="img" aria-label="Grafik penjualan naik dari Januari hingga Juni">
-                            <div class="chart-legend"><span><i class="legend-dot coffee-dot"></i>Penjualan</span><span><i class="legend-dot order-dot"></i>Pesanan</span></div>
+                        <div class="sales-total">
+                            <strong data-sales-total>Rp 0</strong><span>Total pemasukan pesanan selesai</span>
+                            <strong class="orders-total" data-sales-order-count>0</strong>
+                            <span>Pesanan selesai <span data-sales-period-label>bulan ini</span></span>
+                            <a href="#pesanan" data-view="pesanan" class="summary-link">Lihat pesanan <span aria-hidden="true">→</span></a>
+                        </div>
+                        <div class="chart-wrap" data-sales-chart role="img" aria-label="Grafik penjualan dari pesanan selesai">
+                            <div class="chart-legend"><span><i class="legend-dot coffee-dot"></i>Penjualan selesai</span></div>
                             <div class="chart">
-                                <div class="chart-y-labels"><span>10 jt</span><span>7,5 jt</span><span>5 jt</span><span>2,5 jt</span><span>0</span></div>
+                                <div class="chart-y-labels"><span data-sales-axis>0</span><span data-sales-axis>0</span><span data-sales-axis>0</span><span data-sales-axis>0</span><span data-sales-axis>0</span></div>
                                 <svg viewBox="0 0 600 220" preserveAspectRatio="none" aria-hidden="true">
-                                    <defs><linearGradient id="salesFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#b8753d" stop-opacity=".28"/><stop offset="100%" stop-color="#b8753d" stop-opacity="0"/></linearGradient><linearGradient id="ordersFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#e7bb76" stop-opacity=".24"/><stop offset="100%" stop-color="#e7bb76" stop-opacity="0"/></linearGradient></defs>
+                                    <defs><linearGradient id="salesFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#b8753d" stop-opacity=".28"/><stop offset="100%" stop-color="#b8753d" stop-opacity="0"/></linearGradient></defs>
                                     <path class="grid-line" d="M0 20H600M0 64H600M0 108H600M0 152H600M0 196H600"/>
-                                    <path class="area-sales" d="M0 166 C36 150 56 160 90 132 S145 142 184 104 S238 125 276 96 S338 116 376 74 S435 100 468 60 S528 83 560 42 S587 58 600 26 L600 196 L0 196Z"/>
-                                    <path class="line-sales" d="M0 166 C36 150 56 160 90 132 S145 142 184 104 S238 125 276 96 S338 116 376 74 S435 100 468 60 S528 83 560 42 S587 58 600 26"/>
-                                    <path class="area-orders" d="M0 182 C36 172 60 178 90 156 S145 164 184 138 S238 153 276 126 S338 140 376 110 S435 130 468 94 S528 111 560 76 S587 90 600 63 L600 196 L0 196Z"/>
-                                    <path class="line-orders" d="M0 182 C36 172 60 178 90 156 S145 164 184 138 S238 153 276 126 S338 140 376 110 S435 130 468 94 S528 111 560 76 S587 90 600 63"/>
+                                    <path class="area-sales" data-sales-area d="M0 196 L600 196Z"/>
+                                    <path class="line-sales" data-sales-line d="M0 196 L600 196"/>
                                 </svg>
                             </div>
-                            <div class="chart-months"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span></div>
+                            <div class="chart-months" data-sales-labels></div>
                         </div>
                     </div>
                     <div class="sales-footer">
-                        <div><span class="footer-icon wallet-icon">Rp</span><span>Rata-rata transaksi<strong>Rp 34.000</strong></span></div>
-                        <div><span class="footer-icon cup-icon">☕</span><span>Menu terlaris<strong>Kopi Susu Dwiky</strong></span></div>
-                        <div><span class="footer-icon time-icon">◷</span><span>Jam tersibuk<strong>15.00 – 18.00</strong></span></div>
+                        <div><span class="footer-icon wallet-icon">Rp</span><span>Rata-rata transaksi<strong data-sales-average>Rp 0</strong></span></div>
+                        <div><span class="footer-icon cup-icon">☕</span><span>Menu terlaris<strong data-sales-best-seller>Belum ada data</strong></span></div>
+                        <div><span class="footer-icon time-icon">◷</span><span>Jam tersibuk<strong data-sales-busiest-hour>Belum ada data</strong></span></div>
                     </div>
+                    <p class="sales-report-feedback" data-sales-feedback role="status" aria-live="polite" hidden></p>
                 </article>
 
                 <article class="panel analytics-panel">
                     <div class="panel-heading"><div><h2>Komposisi pesanan</h2><p>Ringkasan jenis menu terjual</p></div><button class="more-button" type="button" aria-label="Pilihan lainnya">···</button></div>
-                    <div class="donut-wrap" role="img" aria-label="Komposisi pesanan: kopi 62 persen, non-kopi 24 persen, makanan 14 persen">
-                        <div class="donut"><div class="donut-center"><strong>62%</strong><span>Menu kopi</span></div></div>
+                    <div class="donut-wrap" data-sales-categories role="img" aria-label="Komposisi menu dari pesanan selesai">
+                        <div class="donut" data-sales-donut><div class="donut-center"><strong data-sales-coffee-percent>0%</strong><span>Menu kopi</span></div></div>
                     </div>
-                    <div class="donut-legend"><span><i class="legend-dot coffee-dot"></i>Kopi</span><span><i class="legend-dot food-dot"></i>Makanan</span><span><i class="legend-dot noncoffee-dot"></i>Non-kopi</span></div>
+                    <div class="donut-legend">
+                        <span><i class="legend-dot coffee-dot"></i>Kopi <strong data-sales-category-percent="coffee">0%</strong></span>
+                        <span><i class="legend-dot food-dot"></i>Makanan <strong data-sales-category-percent="food">0%</strong></span>
+                        <span><i class="legend-dot noncoffee-dot"></i>Non-kopi <strong data-sales-category-percent="noncoffee">0%</strong></span>
+                    </div>
                 </article>
             </section>
             </section>
@@ -301,6 +313,6 @@
             <section class="dashboard-footer" data-admin-only hidden><span>© 2026 Kedai Kopi Dwiky</span><span>Dashboard penjualan</span></section>
         </main>
     </div>
-    <script src="Beranda.js?v=customer-menu-only-2"></script>
+    <script src="Beranda.js?v=sales-report-1"></script>
 </body>
 </html>
